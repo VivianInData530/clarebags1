@@ -10,6 +10,7 @@ interface CartContextType {
   addToCart: (item: CartItem) => void
   removeItem: (itemId: string) => void
   updateQty: (itemId: string, qty: number) => void
+  clearCart: () => void
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -41,7 +42,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       ? cart.map(i => i === existing ? { ...i, qty: i.qty + 1 } : i)
       : [...cart, { ...item, qty: 1 }]
     persist(updated)
-    setIsOpen(true)
   }
 
   function removeItem(itemId: string) {
@@ -52,8 +52,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     persist(cart.map(item => item.id === itemId ? { ...item, qty: Math.max(1, qty) } : item))
   }
 
+  function clearCart() {
+    setCart([])
+    localStorage.removeItem('clarebags_cart')
+  }
+
   return (
-    <CartContext.Provider value={{ cart, isOpen, setIsOpen, addToCart, removeItem, updateQty }}>
+    <CartContext.Provider value={{ cart, isOpen, setIsOpen, addToCart, removeItem, updateQty, clearCart }}>
       {children}
     </CartContext.Provider>
   )
