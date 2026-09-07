@@ -66,3 +66,127 @@ button:active {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Navbar */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem clamp(1.1rem, 4vw, 3.5rem);
+  background: #f7f1e7;
+  border-bottom: 1px solid rgba(110, 20, 35, 0.16);
+}
+.site-logo {
+  color: #6e1423;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.45rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.25rem);
+}
+.site-nav a {
+  color: #2c1b1b;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 160ms ease;
+}
+.site-nav a:hover {
+  color: #6e1423;
+}
+.cart-button {
+  position: relative;
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex-shrink: 0;
+  place-items: center;
+  padding: 0;
+  color: #6e1423;
+  background: transparent;
+  border: 1px solid rgba(110, 20, 35, 0.55);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.cart-badge {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.35rem;
+  display: grid;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.2rem;
+  place-items: center;
+  color: #f7f1e7;
+  background: #6e1423;
+  border-radius: 50%;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+}
+@media (max-width: 560px) {
+  .site-header {
+    gap: 0.65rem;
+    padding: 1rem 1.1rem;
+  }
+  .site-logo {
+    font-size: 1.2rem;
+  }
+  .site-nav {
+    flex: 1;
+    justify-content: center;
+    gap: 0.85rem;
+  }
+  .site-nav a {
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+  }
+  .site-nav .home-link {
+    display: none;
+  }
+  .cart-button {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+/* Footer */
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1.25rem;
+  background: #f7f1e7;
+  border-top: 1px solid rgba(110, 20, 35, 0.14);
+}
+.site-footer a {
+  color: #6e1423;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: opacity 160ms ease;
+}
+.site-footer a:hover {
+  opacity: 0.6;
+}
+@media (max-width: 560px) {
+  .site-footer {
+    gap: 1.25rem;
+    padding: 1.5rem 1rem;
+  }
+  .site-footer a {
+    font-size: 0.6rem;
+  }
+}
