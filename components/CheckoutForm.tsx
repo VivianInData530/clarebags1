@@ -30,18 +30,34 @@ export default function CheckoutForm({ items, total, onCancel, onComplete }: Che
     currency: 'NGN',
   })
 
+  function validateCustomerDetails() {
+    if (!customerName.trim() || !customerPhone.trim() || !deliveryAddress.trim()) {
+      setError('Name, phone number, and delivery location are required.')
+      return false
+    }
+
+    return true
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError('')
     setIsSaving(false)
 
+    if (!validateCustomerDetails()) return
+
+    const name = customerName.trim()
+    const phone = customerPhone.trim()
+    const address = deliveryAddress.trim()
+    const email = customerEmail.trim()
+
     initializePayment({
       onSuccess: async () => {
         setIsSaving(true)
         const { error: orderError } = await supabase.from('orders').insert({
-          customer_name: customerName,
-          customer_phone: customerPhone,
-          delivery_address: deliveryAddress,
+          customer_name: name,
+          customer_phone: phone,
+          delivery_address: address,
           items,
           total,
           payment_method: 'paystack',
@@ -61,7 +77,7 @@ export default function CheckoutForm({ items, total, onCancel, onComplete }: Che
       onClose: () => setIsSaving(false),
       config: {
          reference: `clarebags-${Date.now()}`,
-         email: customerEmail,
+         email,
          amount: Math.round(total * 100),
          currency: 'NGN',
       },
@@ -70,12 +86,17 @@ export default function CheckoutForm({ items, total, onCancel, onComplete }: Che
 
   async function handleWhatsAppOrder() {
     setError('')
+    if (!validateCustomerDetails()) return
+
     setIsSaving(true)
+    const name = customerName.trim()
+    const phone = customerPhone.trim()
+    const address = deliveryAddress.trim()
 
     const { error: orderError } = await supabase.from('orders').insert({
-      customer_name: customerName,
-      customer_phone: customerPhone,
-      delivery_address: deliveryAddress,
+      customer_name: name,
+      customer_phone: phone,
+      delivery_address: address,
       items,
       total,
       payment_method: 'whatsapp',
@@ -88,7 +109,7 @@ export default function CheckoutForm({ items, total, onCancel, onComplete }: Che
       return
     }
 
-    window.open(buildWhatsAppLink(items, total, customerName, deliveryAddress), '_blank', 'noopener,noreferrer')
+    window.open(buildWhatsAppLink(items, total, name, address), '_blank', 'noopener,noreferrer')
     clearCart()
     setIsSaving(false)
     onComplete()
@@ -115,7 +136,7 @@ export default function CheckoutForm({ items, total, onCancel, onComplete }: Che
         <input type="email" value={customerEmail} onChange={(event) => setCustomerEmail(event.target.value)} required autoComplete="email" />
       </label>
       <label>
-        Delivery address
+        Delivery location / address
         <textarea value={deliveryAddress} onChange={(event) => setDeliveryAddress(event.target.value)} required rows={3} autoComplete="street-address" />
       </label>
 
