@@ -2,12 +2,21 @@
 
 import Link from 'next/link'
 import { Product } from '@/lib/types'
+import { useCart } from '@/lib/CartContext'
 
 export default function ProductCard({ product }: { product: Product }) {
+  const { addToCart } = useCart()
+
   function handleAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
     e.stopPropagation()
-    // add-to-cart logic goes here (Phase 7)
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      qty: 1,
+      image_url: product.image_url,
+    })
   }
 
   return (

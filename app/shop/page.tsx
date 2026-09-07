@@ -9,7 +9,7 @@ export default async function ShopPage() {
   .eq('in_stock', true)
   .returns<Product[]>()
 
-console.log('products:', products, 'error:', error)
+
 
   return (
     <main className="page">

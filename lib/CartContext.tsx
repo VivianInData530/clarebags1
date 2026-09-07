@@ -20,7 +20,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const saved = localStorage.getItem('clarebags_cart')
-    if (saved) setCart(JSON.parse(saved))
+    if (!saved) return
+
+    try {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed)) queueMicrotask(() => setCart(parsed))
+    } catch {
+      localStorage.removeItem('clarebags_cart')
+    }
   }, [])
 
   function persist(updated: CartItem[]) {
