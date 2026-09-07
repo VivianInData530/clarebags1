@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Product, Variant } from '@/lib/types'
 import { useCart } from '@/lib/CartContext'
 
@@ -27,7 +28,7 @@ export default function ProductDetail({ product }: { product: Product }) {
   return (
     <>
       <div className="productImage">
-        <img src={displayImage} alt={`${product.name} leather handbag${selectedVariant ? ` in ${selectedVariant.color}` : ''}`} />
+        <Image src={displayImage} alt={`${product.name} leather handbag${selectedVariant ? ` in ${selectedVariant.color}` : ''}`} fill sizes="(max-width: 700px) 100vw, 55vw" />
       </div>
 
       <div className="productCopy">

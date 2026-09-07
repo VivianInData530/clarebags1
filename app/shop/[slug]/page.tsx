@@ -55,7 +55,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         .productPage { min-height: 100svh; padding: clamp(1.5rem, 4vw, 4rem) clamp(1.25rem, 6vw, 7rem) 7rem; background: #f7f1e7; color: #2c1b1b; }
         .backLink { display: inline-block; margin-bottom: clamp(2rem, 5vw, 5rem); color: #6e1423; font-family: Arial, Helvetica, sans-serif; font-size: .68rem; letter-spacing: .12em; text-decoration: none; text-transform: uppercase; }
         .productDetail { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(18rem, .9fr); align-items: start; gap: clamp(2rem, 8vw, 9rem); max-width: 1200px; margin: 0 auto; }
-        .productImage { background: #e6dacb; }
+        .productImage { position: relative; aspect-ratio: 1; overflow: hidden; background: #e6dacb; }
         .productImage img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
         .productCopy { padding-top: clamp(0rem, 4vw, 4rem); }
         .eyebrow, .price, .variants p { color: #6e1423; font-family: Arial, Helvetica, sans-serif; font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; }

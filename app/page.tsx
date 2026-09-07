@@ -1,13 +1,17 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Page() {
   return (
     <main className="page">
       <section className="hero" aria-labelledby="brand-name">
         <div className="imageFrame">
-          <img
+          <Image
             src="https://znfnusaqdsgwrxvrueqf.supabase.co/storage/v1/object/public/product-images/herobag.jpg"
             alt="Sculptural burgundy leather handbag with gold hardware"
+            fill
+            priority
+            sizes="100vw"
           />
         </div>
         <div className="copy">

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useCart } from '@/lib/CartContext'
+import Image from 'next/image'
 
 const CheckoutForm = dynamic(() => import('@/components/CheckoutForm'), { ssr: false })
 
@@ -62,7 +63,7 @@ export default function CartDrawer() {
             <div className="cartItems">
               {cart.map((item) => (
                 <article className="cartItem" key={`${item.id}-${item.color || 'default'}`}>
-                  <img src={item.image_url} alt="" />
+                  <Image src={item.image_url} alt="" width={80} height={80} sizes="80px" />
                   <div className="itemDetails">
                     <div className="itemHeading">
                       <div>

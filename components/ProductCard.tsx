@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Product } from '@/lib/types'
 import { useCart } from '@/lib/CartContext'
 
@@ -23,7 +24,7 @@ export default function ProductCard({ product }: { product: Product }) {
     <Link href={`/shop/${product.id}`} className="productCard">
       <article>
         <div className="imageWrap">
-          <img src={product.image_url} alt={`${product.name} leather handbag`} />
+          <Image src={product.image_url} alt={`${product.name} leather handbag`} fill sizes="(max-width: 560px) 50vw, (max-width: 900px) 33vw, 25vw" />
           <button
             className="addButton"
             type="button"
