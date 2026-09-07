@@ -2,11 +2,32 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 import { Product } from '@/lib/types'
 import { useCart } from '@/lib/CartContext'
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addToCart } = useCart()
+  const cardRef = useRef<HTMLElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const card = cardRef.current
+    if (!card) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.12 }
+    )
+
+    observer.observe(card)
+    return () => observer.disconnect()
+  }, [])
 
   function handleAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
@@ -22,7 +43,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <Link href={`/shop/${product.id}`} className="productCard">
-      <article>
+      <article ref={cardRef} className={isVisible ? 'is-visible' : ''}>
         <div className="imageWrap">
           <Image src={product.image_url} alt={`${product.name} leather handbag`} fill sizes="(max-width: 560px) 50vw, (max-width: 900px) 33vw, 25vw" />
           <button
@@ -41,6 +62,11 @@ export default function ProductCard({ product }: { product: Product }) {
       </article>
       <style>{`
         .productCard { min-width: 0; text-decoration: none; display: block; }
+        .productCard article { opacity: 0; transform: translateY(12px); transition: opacity 320ms ease-out, transform 320ms ease-out; }
+        .productCard article.is-visible { opacity: 1; transform: translateY(0); }
+        @media (prefers-reduced-motion: reduce) {
+          .productCard article { opacity: 1; transform: none; transition: none; }
+        }
         .imageWrap { position: relative; aspect-ratio: 1; overflow: hidden; background: #e6dacb; }
         .imageWrap img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 500ms cubic-bezier(.2,.65,.25,1); }
         .productCard:hover .imageWrap img { transform: scale(1.035); }

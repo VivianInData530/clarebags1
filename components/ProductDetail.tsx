@@ -28,7 +28,14 @@ export default function ProductDetail({ product }: { product: Product }) {
   return (
     <>
       <div className="productImage">
-        <Image src={displayImage} alt={`${product.name} leather handbag${selectedVariant ? ` in ${selectedVariant.color}` : ''}`} fill sizes="(max-width: 700px) 100vw, 55vw" />
+        <Image
+          key={displayImage}
+          className="variantImage"
+          src={displayImage}
+          alt={`${product.name} leather handbag${selectedVariant ? ` in ${selectedVariant.color}` : ''}`}
+          fill
+          sizes="(max-width: 700px) 100vw, 55vw"
+        />
       </div>
 
       <div className="productCopy">
@@ -61,6 +68,16 @@ export default function ProductDetail({ product }: { product: Product }) {
           </button>
         </div>
       </div>
+      <style>{`
+        .variantImage { animation: variantImageFade 200ms ease-out both; }
+        @keyframes variantImageFade {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .variantImage { animation: none; }
+        }
+      `}</style>
     </>
   )
 }

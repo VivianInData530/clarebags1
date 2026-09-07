@@ -21,6 +21,16 @@ body {
   font-family: var(--font-inter), sans-serif;
 }
 
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: ease-out;
+}
+
 main {
   animation: pageReveal 420ms ease both;
 }
@@ -146,6 +156,15 @@ button:active {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 0.6rem;
   font-weight: 600;
+  animation: cartBadgePulse 220ms ease-out;
+}
+@keyframes cartBadgePulse {
+  0% { transform: scale(.86); }
+  70% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cart-badge { animation: none; }
 }
 @media (max-width: 560px) {
   .site-header {

@@ -34,7 +34,7 @@ export default function Header() {
         </svg>
 
         {itemCount > 0 && (
-          <span className="cart-badge" aria-label={`${itemCount} items in cart`}>
+          <span key={itemCount} className="cart-badge" aria-label={`${itemCount} items in cart`}>
             {itemCount}
           </span>
         )}
