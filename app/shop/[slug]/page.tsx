@@ -21,16 +21,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound()
   }
 
-  const relatedQuery = supabase
-    .from('products')
-    .select('*')
-    .neq('id', product.id)
-    .limit(2)
-    .returns<Product[]>()
+  const relatedResult = product.category_id === null
+    ? await supabase
+      .from('products')
+      .select('*')
+      .neq('id', product.id)
+      .is('category_id', null)
+      .limit(2)
+      .returns<Product[]>()
+    : await supabase
+      .from('products')
+      .select('*')
+      .neq('id', product.id)
+      .eq('category_id', product.category_id)
+      .limit(2)
+      .returns<Product[]>()
 
-  const { data: related } = product.category_id === null
-    ? await relatedQuery.is('category_id', null)
-    : await relatedQuery.eq('category_id', product.category_id)
+  const { data: related } = relatedResult
 
   return (
     <main className="productPage">
