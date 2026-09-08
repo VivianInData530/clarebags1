@@ -8,6 +8,8 @@ import { useCart } from '@/lib/CartContext'
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addToCart } = useCart()
+  const hasAvailableVariant = !product.variants?.length || product.variants.some((variant) => variant.in_stock !== false)
+  const isAvailable = product.in_stock && hasAvailableVariant
   const cardRef = useRef<HTMLElement>(null)
   const [isVisible, setIsVisible] = useState(false)
 
@@ -32,7 +34,7 @@ export default function ProductCard({ product }: { product: Product }) {
   function handleAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
     e.stopPropagation()
-    if (!product.in_stock) return
+    if (!isAvailable) return
     addToCart({
       id: product.id,
       name: product.name,
@@ -47,7 +49,7 @@ export default function ProductCard({ product }: { product: Product }) {
       <article ref={cardRef} className={isVisible ? 'is-visible' : ''}>
         <div className="imageWrap">
           <Image src={product.image_url} alt={`${product.name} leather handbag`} fill sizes="(max-width: 560px) 50vw, (max-width: 900px) 33vw, 25vw" />
-          {product.in_stock ? (
+          {isAvailable ? (
             <button
               className="addButton"
               type="button"
@@ -62,7 +64,7 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
         <div className="productInfo">
           <h2>{product.name}</h2>
-          <p>{product.in_stock ? `₦${product.price.toLocaleString()}` : 'Sold out'}</p>
+          <p>{isAvailable ? `₦${product.price.toLocaleString()}` : 'Sold out'}</p>
         </div>
       </article>
       <style>{`

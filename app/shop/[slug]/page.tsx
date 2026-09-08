@@ -78,6 +78,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         .variantSwatch { display: inline-block; margin: 0 .5rem .5rem 0; padding: .5rem .7rem; border: 1px solid rgba(110, 20, 35, .3); background: transparent; font-family: Arial, Helvetica, sans-serif; font-size: .7rem; color: #2c1b1b; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; }
         .variantSwatch:hover { border-color: #6e1423; }
         .variantSwatch.active { border-color: #6e1423; background: #6e1423; color: #f7f1e7; }
+        .variantSwatch.soldOut { border-color: rgba(44, 27, 27, .2); color: rgba(44, 27, 27, .45); text-decoration: line-through; cursor: not-allowed; }
         .actionButtons { display: flex; flex-direction: column; gap: .75rem; margin-top: 2.5rem; max-width: 22rem; }
         .addToCartButton, .whatsappButton { padding: .95rem 1.5rem; font-family: Arial, Helvetica, sans-serif; font-size: .68rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
         .addToCartButton { border: 1px solid #6e1423; background: #6e1423; color: #f7f1e7; }

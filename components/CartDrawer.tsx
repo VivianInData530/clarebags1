@@ -91,15 +91,15 @@ export default function CartDrawer() {
 
             <div className="drawerFooter">
               <div className="subtotal"><span>Subtotal</span><strong>₦{subtotal.toLocaleString()}</strong></div>
+              <button type="button" className="checkoutButton textButton continueButton" onClick={closeDrawer}>
+                Continue shopping
+              </button>
               <div className="checkoutButtons">
                 <button type="button" className="checkoutButton filled" disabled={!cart.length} onClick={() => setIsCheckingOut(true)}>
                   Pay with Paystack
                 </button>
                 <button type="button" className="checkoutButton outlined" disabled={!cart.length} onClick={() => setIsCheckingOut(true)}>
                   Order via WhatsApp
-                </button>
-                <button type="button" className="checkoutButton textButton" onClick={closeDrawer}>
-                  Continue shopping
                 </button>
               </div>
             </div>
@@ -134,6 +134,7 @@ export default function CartDrawer() {
         .drawerFooter { padding-top: 1rem; border-top: 1px solid rgba(110, 20, 35, .18); }
         .subtotal { display: flex; justify-content: space-between; color: #6e1423; font-family: Arial, Helvetica, sans-serif; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; }
         .subtotal strong { font-weight: 600; }
+        .continueButton { margin-top: 1rem; }
         .checkoutButtons { display: grid; gap: .65rem; margin-top: 1.25rem; }
         .checkoutButton { width: 100%; padding: .9rem 1rem; border: 1px solid #6e1423; font-family: Arial, Helvetica, sans-serif; font-size: .65rem; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; cursor: pointer; }
         .checkoutButton.filled { background: #6e1423; color: #f7f1e7; }

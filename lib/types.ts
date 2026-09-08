@@ -1,6 +1,7 @@
 export interface Variant {
   color: string
   image_url: string
+  in_stock?: boolean
 }
 
 export interface Product {

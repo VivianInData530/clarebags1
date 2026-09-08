@@ -53,6 +53,58 @@ function ProductForm({ product }: { product?: Product }) {
         <input name="in_stock" type="checkbox" defaultChecked={product?.in_stock ?? true} />
         In stock
       </label>
+      {product?.variants && product.variants.length > 0 && (
+        <fieldset className="variantInventory">
+          <legend>Color inventory</legend>
+          <input type="hidden" name="variants_json" value={JSON.stringify(product.variants)} />
+          {product.variants.map((variant, index) => (
+            <div className="variantFields" key={variant.color}>
+              <label>
+                {variant.color} image URL
+                <input name={`variant_image_url_${index}`} type="url" defaultValue={variant.image_url} />
+              </label>
+              <label>
+                Or choose {variant.color} image
+                <input name={`variant_image_file_${index}`} type="file" accept="image/*" />
+              </label>
+              <label className="checkboxLabel">
+                <input
+                  name={`variant_in_stock_${index}`}
+                  type="checkbox"
+                  defaultChecked={variant.in_stock !== false}
+                />
+                {variant.color} in stock
+              </label>
+            </div>
+          ))}
+        </fieldset>
+      )}
+      {!product && (
+        <fieldset className="variantInventory">
+          <legend>Color variants (optional)</legend>
+          <p className="fieldHint">Add up to three colors. Each color needs an image URL.</p>
+          {[0, 1, 2].map((index) => (
+            <div className="variantFields" key={index}>
+              <label>
+                Color {index + 1}
+                <input name={`variant_color_${index}`} placeholder="e.g. Burgundy" />
+              </label>
+              <label>
+                Image URL {index + 1}
+                <input name={`variant_image_url_${index}`} type="url" placeholder="https://..." />
+              </label>
+              <label>
+                Or choose image {index + 1}
+                <input name={`variant_image_file_${index}`} type="file" accept="image/*" />
+              </label>
+              <label className="checkboxLabel">
+                <input name={`variant_in_stock_${index}`} type="checkbox" defaultChecked />
+                In stock
+              </label>
+            </div>
+          ))}
+        </fieldset>
+      )}
       <button type="submit" className="button filled">{product ? 'Save changes' : 'Add product'}</button>
     </form>
   )
@@ -119,6 +171,13 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               <div className="productSummary">
                 <h3>{product.name}</h3>
                 <p>₦{product.price.toLocaleString()} · {product.in_stock ? 'In stock' : 'Out of stock'}</p>
+                {product.variants && product.variants.length > 0 && (
+                  <ul className="variantSummary" aria-label="Product color inventory">
+                    {product.variants.map((variant) => (
+                      <li key={variant.color}>{variant.color}: {variant.in_stock === false ? 'Sold out' : 'In stock'}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
               <div className="rowActions">
                 <details>
@@ -183,6 +242,14 @@ function AdminStyles() {
       .wideField { grid-column: 1 / -1; }
       .checkboxLabel { display: flex; grid-template-columns: auto 1fr; align-items: center; gap: .5rem; width: fit-content; }
       .checkboxLabel input { width: auto; }
+      .variantInventory { display: grid; gap: .65rem; grid-column: 1 / -1; margin: 0; padding: 1rem; border: 1px solid rgba(110, 20, 35, .18); }
+      .variantInventory legend { padding: 0 .35rem; color: #6e1423; font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; }
+      .variantFields { display: grid; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid rgba(110, 20, 35, .1); }
+      .variantFields:last-child { border-bottom: 0; }
+      .fieldHint { margin: 0; color: #2c1b1b; font: .78rem Georgia, 'Times New Roman', serif; }
+      .fieldHint { margin: 0; color: rgba(44, 27, 27, .7); font: .8rem Georgia, 'Times New Roman', serif; grid-column: 1 / -1; }
+      .variantFields { display: grid; grid-template-columns: 1fr 1.5fr auto; align-items: end; gap: .75rem; padding-top: .5rem; }
+      .variantSummary { display: flex; flex-wrap: wrap; gap: .35rem .8rem; margin: .5rem 0 0; padding: 0; color: #6e1423; font-size: .65rem; list-style: none; }
       .button { display: inline-flex; align-items: center; justify-content: center; min-height: 2.6rem; padding: .7rem 1rem; border: 1px solid #6e1423; border-radius: 0; font: 600 .65rem Arial, Helvetica, sans-serif; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
       .filled { background: #6e1423; color: #f7f1e7; }
       .outlined { background: transparent; color: #6e1423; }
@@ -197,7 +264,7 @@ function AdminStyles() {
       details .productForm { position: absolute; right: 0; z-index: 2; width: min(80vw, 42rem); margin-top: .5rem; padding: 1rem; border: 1px solid rgba(110, 20, 35, .25); background: #f7f1e7; box-shadow: 0 1rem 2rem rgba(44, 27, 27, .12); }
       summary { list-style: none; }
       summary::-webkit-details-marker { display: none; }
-      @media (max-width: 700px) { .adminHeader, .sectionHeading { align-items: start; flex-direction: column; } .productForm { grid-template-columns: 1fr; } .productRow { grid-template-columns: 3.5rem minmax(0, 1fr); } .productRow img { width: 3.5rem; height: 3.5rem; } .rowActions { grid-column: 1 / -1; justify-content: start; } details .productForm { right: auto; left: 0; width: min(90vw, 28rem); } }
+      @media (max-width: 700px) { .adminHeader, .sectionHeading { align-items: start; flex-direction: column; } .productForm { grid-template-columns: 1fr; } .productRow { grid-template-columns: 3.5rem minmax(0, 1fr); } .productRow img { width: 3.5rem; height: 3.5rem; } .rowActions { grid-column: 1 / -1; justify-content: start; } details .productForm { right: auto; left: 0; width: min(90vw, 28rem); } .variantFields { grid-template-columns: 1fr; align-items: start; } }
     `}</style>
   )
 }

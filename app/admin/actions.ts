@@ -53,6 +53,22 @@ function getText(formData: FormData, field: string) {
   return String(formData.get(field) || '').trim()
 }
 
+async function uploadProductImage(file: FormDataEntryValue | null) {
+  if (!(file instanceof File) || file.size === 0) return null
+  if (!file.type.startsWith('image/')) throw new Error('The uploaded file must be an image')
+  if (file.size > 5 * 1024 * 1024) throw new Error('Images must be 5MB or smaller')
+
+  const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+  const path = `products/${crypto.randomUUID()}.${extension}`
+  const adminClient = getAdminClient()
+  const { error: uploadError } = await adminClient.storage.from('product-images').upload(path, Buffer.from(await file.arrayBuffer()), {
+    contentType: file.type,
+    upsert: false,
+  })
+  if (uploadError) throw new Error(`Image upload failed: ${uploadError.message}`)
+  return adminClient.storage.from('product-images').getPublicUrl(path).data.publicUrl
+}
+
 async function getProductValues(formData: FormData) {
   const name = getText(formData, 'name')
   const imageUrl = getText(formData, 'image_url')
@@ -60,6 +76,7 @@ async function getProductValues(formData: FormData) {
   const description = getText(formData, 'description')
   const price = Number(formData.get('price'))
   const categoryId = getText(formData, 'category_id')
+  const variantsJson = getText(formData, 'variants_json')
   const imageFile = formData.get('image_file')
 
   if (!name || !Number.isFinite(price) || price < 0) {
@@ -67,21 +84,37 @@ async function getProductValues(formData: FormData) {
   }
 
   let finalImageUrl = imageUrl || currentImageUrl
-  if (imageFile instanceof File && imageFile.size > 0) {
-    if (!imageFile.type.startsWith('image/')) throw new Error('The uploaded file must be an image')
-    if (imageFile.size > 5 * 1024 * 1024) throw new Error('Images must be 5MB or smaller')
-
-    const extension = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg'
-    const path = `products/${crypto.randomUUID()}.${extension}`
-    const { error: uploadError } = await getAdminClient().storage.from('product-images').upload(path, Buffer.from(await imageFile.arrayBuffer()), {
-      contentType: imageFile.type,
-      upsert: false,
-    })
-    if (uploadError) throw new Error(`Image upload failed: ${uploadError.message}`)
-    finalImageUrl = getAdminClient().storage.from('product-images').getPublicUrl(path).data.publicUrl
-  }
+  const uploadedImageUrl = await uploadProductImage(imageFile)
+  if (uploadedImageUrl) finalImageUrl = uploadedImageUrl
 
   if (!finalImageUrl) throw new Error('Choose an image file or provide an image URL')
+
+  let variants: { color: string; image_url: string; in_stock: boolean }[] | undefined
+  if (variantsJson) {
+    try {
+      const parsed = JSON.parse(variantsJson) as { color: string; image_url: string }[]
+      variants = await Promise.all(parsed.map(async (variant, index) => ({
+        ...variant,
+        image_url: await uploadProductImage(formData.get(`variant_image_file_${index}`)) || getText(formData, `variant_image_url_${index}`) || variant.image_url,
+        in_stock: formData.get(`variant_in_stock_${index}`) === 'on',
+      })))
+    } catch {
+      throw new Error('Product variants are invalid')
+    }
+  } else {
+    const submittedVariants = await Promise.all([0, 1, 2].map(async (index) => ({
+      color: getText(formData, `variant_color_${index}`),
+      image_url: await uploadProductImage(formData.get(`variant_image_file_${index}`)) || getText(formData, `variant_image_url_${index}`),
+      in_stock: formData.get(`variant_in_stock_${index}`) === 'on',
+    })))
+    const hasVariantFields = submittedVariants.some((variant) => variant.color || variant.image_url)
+    if (hasVariantFields) {
+      if (submittedVariants.some((variant) => Boolean(variant.color) !== Boolean(variant.image_url))) {
+        throw new Error('Each variant needs both a color and an image URL')
+      }
+      variants = submittedVariants.filter((variant) => variant.color && variant.image_url)
+    }
+  }
 
   return {
     name,
@@ -90,6 +123,7 @@ async function getProductValues(formData: FormData) {
     price,
     category_id: categoryId || null,
     in_stock: formData.get('in_stock') === 'on',
+    ...(variants ? { variants } : {}),
   }
 }
 
@@ -103,7 +137,7 @@ export async function getAdminProducts() {
     image_url: string
     category_id: string | null
     in_stock: boolean
-    variants: { color: string; image_url: string }[] | null
+    variants: { color: string; image_url: string; in_stock?: boolean }[] | null
   }[]>()
 
   return { products: data || [], error: error?.message || null }

@@ -8,14 +8,16 @@ import { useCart } from '@/lib/CartContext'
 export default function ProductDetail({ product }: { product: Product }) {
   const { addToCart } = useCart()
   const hasVariants = product.variants && product.variants.length > 0
+  const hasAvailableVariant = !product.variants?.length || product.variants.some((variant) => variant.in_stock !== false)
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(
-    hasVariants ? product.variants![0] : null
+    hasVariants ? product.variants!.find((variant) => variant.in_stock !== false) || product.variants![0] : null
   )
 
   const displayImage = selectedVariant?.image_url || product.image_url
+  const isAvailable = product.in_stock && hasAvailableVariant && (selectedVariant?.in_stock !== false)
 
   function handleAddToCart() {
-    if (!product.in_stock) return
+    if (!isAvailable) return
     addToCart({
       id: product.id,
       name: product.name,
@@ -53,7 +55,9 @@ export default function ProductDetail({ product }: { product: Product }) {
                 <button
                   key={variant.color}
                   type="button"
-                  className={`variantSwatch${selectedVariant?.color === variant.color ? ' active' : ''}`}
+                  className={`variantSwatch${selectedVariant?.color === variant.color ? ' active' : ''}${variant.in_stock === false ? ' soldOut' : ''}`}
+                  disabled={variant.in_stock === false}
+                  aria-label={`${variant.color}${variant.in_stock === false ? ' sold out' : ''}`}
                   onClick={() => setSelectedVariant(variant)}
                 >
                   {variant.color}
@@ -64,8 +68,8 @@ export default function ProductDetail({ product }: { product: Product }) {
         )}
 
         <div className="actionButtons">
-          <button type="button" className="addToCartButton" disabled={!product.in_stock} onClick={handleAddToCart}>
-            {product.in_stock ? 'Add to cart' : 'Sold out'}
+          <button type="button" className="addToCartButton" disabled={!isAvailable} onClick={handleAddToCart}>
+            {isAvailable ? 'Add to cart' : 'Sold out'}
           </button>
         </div>
       </div>
