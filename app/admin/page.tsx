@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers'
 import { Product } from '@/lib/types'
 import {
   createProduct,
@@ -6,13 +5,12 @@ import {
   getAdminProducts,
   loginAdmin,
   logoutAdmin,
+  isAdminAuthenticated,
   toggleProductStock,
   updateProduct,
 } from './actions'
 
 export const dynamic = 'force-dynamic'
-
-const ADMIN_COOKIE = 'clarebags_admin'
 
 type AdminPageProps = {
   searchParams: Promise<{ error?: string }>
@@ -111,8 +109,7 @@ function ProductForm({ product }: { product?: Product }) {
 }
 
 export default async function AdminPage({ searchParams }: AdminPageProps) {
-  const cookieStore = await cookies()
-  const isAuthenticated = cookieStore.get(ADMIN_COOKIE)?.value === 'authenticated'
+  const isAuthenticated = await isAdminAuthenticated()
   const params = await searchParams
 
   if (!isAuthenticated) {

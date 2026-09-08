@@ -1,11 +1,26 @@
 'use server'
 
 import { createClient } from '@supabase/supabase-js'
+import { createHash } from 'crypto'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
 const ADMIN_COOKIE = 'clarebags_admin'
+
+function getAdminSessionValue() {
+  const adminPassword = process.env.ADMIN_PASSWORD
+  if (!adminPassword) return null
+  return createHash('sha256').update(adminPassword).digest('hex')
+}
+
+export async function isAdminAuthenticated() {
+  const sessionValue = getAdminSessionValue()
+  if (!sessionValue) return false
+
+  const cookieStore = await cookies()
+  return cookieStore.get(ADMIN_COOKIE)?.value === sessionValue
+}
 
 function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -21,8 +36,7 @@ function getAdminClient() {
 }
 
 async function requireAdmin() {
-  const cookieStore = await cookies()
-  if (cookieStore.get(ADMIN_COOKIE)?.value !== 'authenticated') redirect('/admin')
+  if (!(await isAdminAuthenticated())) redirect('/admin')
 }
 
 export async function loginAdmin(formData: FormData) {
@@ -34,7 +48,7 @@ export async function loginAdmin(formData: FormData) {
   }
 
   const cookieStore = await cookies()
-  cookieStore.set(ADMIN_COOKIE, 'authenticated', {
+  cookieStore.set(ADMIN_COOKIE, getAdminSessionValue()!, {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',

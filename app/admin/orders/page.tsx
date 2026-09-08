@@ -1,10 +1,7 @@
-import { cookies } from 'next/headers'
 import Link from 'next/link'
-import { getAdminOrders, logoutAdmin } from '../actions'
+import { getAdminOrders, isAdminAuthenticated, logoutAdmin } from '../actions'
 
 export const dynamic = 'force-dynamic'
-
-const ADMIN_COOKIE = 'clarebags_admin'
 
 type OrderItem = {
   name: string
@@ -14,8 +11,7 @@ type OrderItem = {
 }
 
 export default async function AdminOrdersPage() {
-  const cookieStore = await cookies()
-  const isAuthenticated = cookieStore.get(ADMIN_COOKIE)?.value === 'authenticated'
+  const isAuthenticated = await isAdminAuthenticated()
 
   if (!isAuthenticated) {
     return (
