@@ -195,30 +195,52 @@ button:active {
 .site-footer {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 2rem;
   padding: 2rem 1.25rem;
   background: #f7f1e7;
   border-top: 1px solid rgba(110, 20, 35, 0.14);
 }
-.site-footer a {
+.footerBrand {
   color: #6e1423;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-decoration: none;
-  text-transform: uppercase;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.2rem;
+}
+.footerLinks {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.site-footer a {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  place-items: center;
+  color: #6e1423;
   transition: opacity 160ms ease;
 }
 .site-footer a:hover {
   opacity: 0.6;
 }
+.site-footer svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+.site-footer .iconFill {
+  fill: currentColor;
+  stroke: none;
+}
 @media (max-width: 560px) {
   .site-footer {
-    gap: 1.25rem;
     padding: 1.5rem 1rem;
   }
-  .site-footer a {
-    font-size: 0.6rem;
+  .footerBrand {
+    font-size: 1.05rem;
+  }
+  .footerLinks {
+    gap: 1rem;
   }
 }

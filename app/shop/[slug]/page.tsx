@@ -21,13 +21,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound()
   }
 
-  const { data: related } = await supabase
+  const relatedQuery = supabase
     .from('products')
     .select('*')
-    .eq('category_id', product.category_id)
     .neq('id', product.id)
     .limit(2)
     .returns<Product[]>()
+
+  const { data: related } = product.category_id === null
+    ? await relatedQuery.is('category_id', null)
+    : await relatedQuery.eq('category_id', product.category_id)
 
   return (
     <main className="productPage">

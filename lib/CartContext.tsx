@@ -1,7 +1,9 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react'
 import { CartItem } from '@/lib/types'
+
+const CART_INTRO_SEEN_KEY = 'clarebags_cart_intro_seen'
 
 interface CartContextType {
   cart: CartItem[]
@@ -18,8 +20,11 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([])
   const [isOpen, setIsOpen] = useState(false)
+  const hasSeenCartIntro = useRef(false)
 
   useEffect(() => {
+    hasSeenCartIntro.current = localStorage.getItem(CART_INTRO_SEEN_KEY) === 'true'
+
     const saved = localStorage.getItem('clarebags_cart')
     if (!saved) return
 
@@ -42,6 +47,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       ? cart.map(i => i === existing ? { ...i, qty: i.qty + 1 } : i)
       : [...cart, { ...item, qty: 1 }]
     persist(updated)
+
+    if (!hasSeenCartIntro.current) {
+      hasSeenCartIntro.current = true
+      localStorage.setItem(CART_INTRO_SEEN_KEY, 'true')
+      setIsOpen(true)
+    }
   }
 
   function removeItem(itemId: string) {

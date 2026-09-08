@@ -98,6 +98,9 @@ export default function CartDrawer() {
                 <button type="button" className="checkoutButton outlined" disabled={!cart.length} onClick={() => setIsCheckingOut(true)}>
                   Order via WhatsApp
                 </button>
+                <button type="button" className="checkoutButton textButton" onClick={closeDrawer}>
+                  Continue shopping
+                </button>
               </div>
             </div>
           </>
@@ -135,6 +138,7 @@ export default function CartDrawer() {
         .checkoutButton { width: 100%; padding: .9rem 1rem; border: 1px solid #6e1423; font-family: Arial, Helvetica, sans-serif; font-size: .65rem; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; cursor: pointer; }
         .checkoutButton.filled { background: #6e1423; color: #f7f1e7; }
         .checkoutButton.outlined { background: transparent; color: #6e1423; }
+        .checkoutButton.textButton { border-color: transparent; background: transparent; color: #6e1423; }
         .checkoutButton:disabled { cursor: not-allowed; opacity: .45; }
         @media (prefers-reduced-motion: reduce) { .drawerBackdrop, .cartDrawer { transition: none; } }
       `}</style>
