@@ -15,6 +15,7 @@ export default function ProductDetail({ product }: { product: Product }) {
   const displayImage = selectedVariant?.image_url || product.image_url
 
   function handleAddToCart() {
+    if (!product.in_stock) return
     addToCart({
       id: product.id,
       name: product.name,
@@ -63,8 +64,8 @@ export default function ProductDetail({ product }: { product: Product }) {
         )}
 
         <div className="actionButtons">
-          <button type="button" className="addToCartButton" onClick={handleAddToCart}>
-            Add to cart
+          <button type="button" className="addToCartButton" disabled={!product.in_stock} onClick={handleAddToCart}>
+            {product.in_stock ? 'Add to cart' : 'Sold out'}
           </button>
         </div>
       </div>

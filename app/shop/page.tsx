@@ -6,7 +6,6 @@ export default async function ShopPage() {
  const { data: products, error } = await supabase
   .from('products')
   .select('*')
-  .eq('in_stock', true)
   .returns<Product[]>()
 
 

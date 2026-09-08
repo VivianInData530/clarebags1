@@ -32,6 +32,7 @@ export default function ProductCard({ product }: { product: Product }) {
   function handleAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
     e.stopPropagation()
+    if (!product.in_stock) return
     addToCart({
       id: product.id,
       name: product.name,
@@ -46,18 +47,22 @@ export default function ProductCard({ product }: { product: Product }) {
       <article ref={cardRef} className={isVisible ? 'is-visible' : ''}>
         <div className="imageWrap">
           <Image src={product.image_url} alt={`${product.name} leather handbag`} fill sizes="(max-width: 560px) 50vw, (max-width: 900px) 33vw, 25vw" />
-          <button
-            className="addButton"
-            type="button"
-            aria-label={`Add ${product.name} to cart`}
-            onClick={handleAddToCart}
-          >
-            <span aria-hidden="true">+</span>
-          </button>
+          {product.in_stock ? (
+            <button
+              className="addButton"
+              type="button"
+              aria-label={`Add ${product.name} to cart`}
+              onClick={handleAddToCart}
+            >
+              <span aria-hidden="true">+</span>
+            </button>
+          ) : (
+            <span className="soldOutBadge">Sold out</span>
+          )}
         </div>
         <div className="productInfo">
           <h2>{product.name}</h2>
-          <p>₦{product.price.toLocaleString()}</p>
+          <p>{product.in_stock ? `₦${product.price.toLocaleString()}` : 'Sold out'}</p>
         </div>
       </article>
       <style>{`
@@ -74,11 +79,12 @@ export default function ProductCard({ product }: { product: Product }) {
         .addButton span { font-family: Arial, Helvetica, sans-serif; font-size: 1.3rem; font-weight: 300; line-height: 1; transform: translateY(-1px); }
         .addButton:hover, .addButton:focus-visible { background: #50101b; transform: scale(1.06); }
         .addButton:focus-visible { outline: 2px solid #6e1423; outline-offset: 3px; }
+        .soldOutBadge { position: absolute; inset: 50% auto auto 50%; padding: .65rem .85rem; background: rgba(110, 20, 35, .94); color: #f7f1e7; font-family: Arial, Helvetica, sans-serif; font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; transform: translate(-50%, -50%); }
         .productInfo { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; padding-top: 1.1rem; }
         .productInfo h2, .productInfo p { margin: 0; }
         .productInfo h2 { color: #2c1b1b; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(.9rem, 1.2vw, 1.08rem); font-weight: 400; letter-spacing: -.01em; }
         .productInfo p { color: #6e1423; font-family: Arial, Helvetica, sans-serif; font-size: .68rem; letter-spacing: .09em; white-space: nowrap; }
-        @media (max-width: 560px) { .productInfo { display: block; padding-top: .8rem; } .productInfo p { margin-top: .38rem; } .addButton { right: .6rem; bottom: .6rem; width: 2.1rem; height: 2.1rem; } }
+        @media (max-width: 560px) { .productInfo { display: block; padding-top: .8rem; } .productInfo p { margin-top: .38rem; } .addButton { right: .6rem; bottom: .6rem; width: 2.1rem; height: 2.1rem; } .soldOutBadge { padding: .55rem .65rem; font-size: .54rem; letter-spacing: .12em; } }
         @media (prefers-reduced-motion: reduce) { .imageWrap img { transition: none; } }
       `}</style>
     </Link>
